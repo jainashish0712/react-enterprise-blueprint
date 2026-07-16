@@ -49,7 +49,7 @@ describe('Home Component', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/Redux Toolkit Setup/i)).toBeInTheDocument();
+    expect(screen.getByText(/React Enterprise Blueprint/i)).toBeInTheDocument();
 
     // The initial state of the store is 2 (from counterSlice.ts)
     expect(screen.getByText(/Count is 2/i)).toBeInTheDocument();

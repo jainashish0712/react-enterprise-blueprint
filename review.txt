@@ -1,0 +1,99 @@
+FRONT-END ASSIGNMENT REVIEW CALL PREP
+Top 10 Most Common Questions & Exact Answers based on Your Implementation
+
+Even though this app started as a simple RTK Query practice project, you have implemented a robust, enterprise-grade architecture. In a review call, the interviewer wants to see if you understand *why* you made certain technical decisions, not just *how* to code them. 
+
+Use this guide to confidently explain your technical decisions.
+
+---
+
+### 1. "Walk me through the architecture and state management approach of this app."
+**Your Answer:** 
+"I used Redux Toolkit (RTK) as the foundation. I strictly separated 'Client State' (like the UI counter) from 'Server State' (the API data). For the Server State, I implemented RTK Query. This is crucial for an enterprise app because it abstracts away the boilerplate of data fetching, handles loading/error states automatically, and most importantly, caches the data so we aren't making redundant network requests when switching between pages."
+
+### 2. "How did you optimize performance and initial load times?"
+**Your Answer:** 
+"I implemented Route-level Code Splitting using `React.lazy` and wrapped the routes in a `<Suspense>` boundary. This ensures the user only downloads the JavaScript required for the page they are on. Furthermore, I configured advanced Vite Chunk Splitting (`manualChunks`) in the build config to separate massive vendor libraries (like React, Redux, and MUI) into their own cacheable files, speeding up subsequent page loads."
+
+### 3. "I see you're using RTK Query. How are you optimizing the perceived loading speed for the user?"
+**Your Answer:** 
+"I implemented Data Prefetching on hover. For example, on the Home page, I use RTK Query's `usePrefetch` hook so that when the user simply hovers their mouse over the 'Go to Posts' button, the network request fires in the background. By the time they actually click and navigate, the data is already in the Redux cache, making the page transition feel instantaneous with zero loading spinners."
+
+### 4. "How do you handle search filtering without causing UI freezing or performance drops?"
+**Your Answer:** 
+"In the Users and Posts pages, I built a custom `useDebounce` hook. Instead of filtering the data and forcing the heavy MUI DataGrid to re-render on every single keystroke, the search term is debounced by 300ms. I paired this with `useMemo` so the filtering computation only runs when the debounced term or the cached API data actually changes."
+
+### 5. "Why did you create and use `useAppSelector` and `useAppDispatch` instead of the standard `react-redux` hooks?"
+**Your Answer:** 
+"Type safety and developer experience. By pre-typing the hooks in `store.ts` with `RootState` and `AppDispatch`, I guarantee that TypeScript will autocomplete my entire Redux store anywhere in the app. It prevents bugs and means I don't have to manually type `(state: RootState)` every time I want to read from the store."
+
+### 6. "How did you structure your styling architecture and why?"
+**Your Answer:** 
+"I noticed the app originally had a mix of raw CSS files and inline styles, which doesn't scale. I unified the architecture by migrating everything to MUI's CSS-in-JS `styled()` components. This encapsulates the styles to the specific components, keeps the JSX incredibly clean, and allowed me to seamlessly integrate `framer-motion` for declarative, high-performance UI animations (like the floating page transitions and button hover states)."
+
+### 7. "What happens if a component crashes or an API call fails?"
+**Your Answer:** 
+"I prioritize app stability. For API failures, RTK Query automatically provides an `error` state which I use to conditionally render fallback UI (so the user isn't stuck on a loading screen). For unexpected runtime JavaScript crashes, I wrapped the entire application tree in a Global `<ErrorBoundary>` (using `react-error-boundary`). This catches exceptions and displays a clean fallback component instead of giving the user a broken 'white screen of death'."
+
+### 8. "Why did you choose Vitest over Jest for your testing framework?"
+**Your Answer:** 
+"Since the app is built on Vite, Vitest is the modern industry standard. It shares the exact same configuration pipeline as Vite, understands ES modules out-of-the-box without complex Babel setups, and runs significantly faster. It also has a fully Jest-compatible API, so I didn't have to rewrite the syntax for the existing test suites."
+
+### 9. "I notice you've used `createSelector` in your Redux slice. What is the benefit of this?"
+**Your Answer:** 
+"It provides strict Memoization for derived state. In the counter slice, `createSelector` ensures that if a component asks for derived data, it won't trigger expensive recalculations or cause React to re-render unless the underlying piece of state has actually changed. It's a best practice to set this up early before the store becomes massive."
+
+### 10. "If this app were to scale into a massive enterprise product with millions of users, what would be your immediate next steps?"
+**Your Answer:** 
+"While the frontend is highly optimized, the immediate bottleneck would be the network payload size on the DataGrid. I would transition the RTK Query endpoint to use Server-Side Pagination (passing `?skip` and `?limit` params) and connect it to the MUI DataGrid's server-side pagination API. I would also setup Husky and lint-staged to enforce Prettier and ESLint rules on pre-commit to maintain code quality across a growing team."
+
+---
+
+## GENERALIZED FRONT-END INTERVIEW QUESTIONS
+If the interviewers haven't reviewed your exact source code yet, they will ask broader architectural questions. Here are the top 10 most common general questions and how you can answer them using your knowledge from this project.
+
+### 1. "How do you decide between using Local State (useState) vs Global State (Redux)?"
+**Your Answer:**
+"I evaluate the scope of the data. If the data is only relevant to a single component or its immediate children (like a controlled input form or a UI toggle), I use `useState`. If the data is needed across multiple, disconnected areas of the application (like user authentication status, themes, or cached API responses), I use Global State like Redux. Keeping local state local prevents unnecessary app-wide re-renders."
+
+### 2. "What is the Virtual DOM and why is React fast?"
+**Your Answer:**
+"The Virtual DOM is a lightweight JavaScript representation of the actual DOM. React is fast because updating the real DOM directly is an expensive operation. When state changes, React creates a new Virtual DOM, compares it to the previous one (a process called 'Diffing' or 'Reconciliation'), and calculates the exact minimal set of changes needed. It then batches these updates and applies them to the real DOM all at once."
+
+### 3. "How do you handle performance optimization in a large React application?"
+**Your Answer:**
+"There are a few key strategies I rely on:
+1. **Code Splitting:** Using `React.lazy()` and `<Suspense>` to chunk the bundle.
+2. **Memoization:** Wrapping heavy computations in `useMemo` and functions in `useCallback` to prevent unnecessary recalculations on every render.
+3. **Debouncing:** Delaying API calls or expensive UI updates during rapid user input (like typing in a search bar) using a custom `useDebounce` hook.
+4. **Virtualization/Pagination:** For massive lists, never rendering all DOM nodes at once. I prefer server-side pagination or windowing tools like react-window."
+
+### 4. "What are React Hooks and what are the rules for using them?"
+**Your Answer:**
+"Hooks allow functional components to hook into React state and lifecycle features (like `useEffect` or `useState`). The two unbreakable rules are: 
+1. Only call Hooks at the top level of a component (never inside loops, conditions, or nested functions) to ensure they are called in the exact same order every render.
+2. Only call Hooks from React function components or custom Hooks."
+
+### 5. "Can you explain the difference between Client-Side Rendering (CSR) and Server-Side Rendering (SSR)?"
+**Your Answer:**
+"In CSR (like a standard Vite React app), the server sends an empty HTML file and a large JavaScript bundle. The browser downloads the JS and renders the UI. It's great for highly interactive web apps but has a slower initial load. In SSR (like Next.js), the server generates the fully populated HTML for the specific request and sends it to the browser, resulting in a much faster initial page load and much better SEO, though it increases server load."
+
+### 6. "How do you handle asynchronous operations and side effects in React?"
+**Your Answer:**
+"Traditionally, we handle side effects in the `useEffect` hook, ensuring we provide a cleanup function to prevent memory leaks (like removing event listeners or aborting fetch requests). However, for data fetching specifically, I strongly prefer using tools like RTK Query or React Query. They abstract the `useEffect` boilerplate away and handle the async lifecycle, caching, and deduplication entirely behind the scenes."
+
+### 7. "What is prop drilling and how do you avoid it?"
+**Your Answer:**
+"Prop drilling is the anti-pattern of passing data through multiple layers of nested components that don't actually need the data, just to get it to a deeply nested child. To avoid it, I use the React Context API for relatively static data (like themes or auth state), or a state management library like Redux for rapidly changing, complex state."
+
+### 8. "How do you approach styling in a modern React application?"
+**Your Answer:**
+"I believe in scoped, modular styling. Global CSS easily leads to naming collisions and dead code. I prefer using CSS Modules or CSS-in-JS solutions like `styled-components` (or MUI's `styled` engine). This approach encapsulates styles strictly to the component, allows us to pass JavaScript variables directly into the CSS for dynamic styling, and ensures unused styles are stripped out during the build."
+
+### 9. "What is Strict Mode in React and why do we use it?"
+**Your Answer:**
+"React Strict Mode is a development-only tool that highlights potential problems in an application. It intentionally double-invokes certain lifecycle methods and hooks (like `useEffect` and `useState` initializers) to help developers spot side-effects that aren't properly cleaned up. It also warns you if you are using deprecated APIs. It does not affect production builds."
+
+### 10. "How do you ensure your application is accessible (a11y)?"
+**Your Answer:**
+"Accessibility shouldn't be an afterthought. I ensure all images have descriptive `alt` tags, use semantic HTML (like `<header>`, `<nav>`, `<main>`, and `<article>` instead of just `<div>`), ensure sufficient color contrast, and most importantly, guarantee that the entire application can be navigated using only the keyboard (managing `tabIndex` and focus states). Using a robust component library like MUI often helps bake these standards in by default."

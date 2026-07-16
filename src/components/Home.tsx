@@ -134,7 +134,7 @@ export default function Home() {
           <img src={viteLogo} className="vite" alt="Vite logo" />
         </Hero>
         <div>
-          <h1>Redux Toolkit Setup</h1>
+          <h1>React Enterprise Blueprint</h1>
           <p>Counter and RTK Query Example</p>
         </div>
         <FlexContainer>
