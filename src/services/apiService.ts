@@ -16,6 +16,23 @@ export interface PostsResponse {
   limit: number;
 }
 
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  age: number;
+  role: string;
+}
+
+export interface UsersResponse {
+  users: User[];
+  total: number;
+  skip: number;
+  limit: number;
+}
+
 export const thisIsThePostsApi = createApi({
   reducerPath: 'postsApiReducerPath',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://dummyjson.com/' }),
@@ -23,9 +40,12 @@ export const thisIsThePostsApi = createApi({
     getThePostsDummyRes: builder.query<PostsResponse, void>({
       query: () => 'posts',
     }),
+    getUsers: builder.query<UsersResponse, void>({
+      query: () => 'users',
+    }),
   }),
 });
 
-export const { useGetThePostsDummyResQuery } = thisIsThePostsApi;
+export const { useGetThePostsDummyResQuery, useGetUsersQuery } = thisIsThePostsApi;
 
 export const thisWillBeUsedInstoreForApi = thisIsThePostsApi.reducer;

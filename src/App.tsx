@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 const PostsPage = lazy(()=> import('./components/PostsPage'))
+const UsersPage = lazy(()=> import('./components/UsersPage'))
 const Home = lazy(()=> import('./components/Home'))
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/posts" element={<PostsPage />} />
+          <Route path="/users" element={<UsersPage />} />
         </Routes>
       </Suspense>
     </ThemeProvider>

@@ -160,6 +160,13 @@ export default function Home() {
         >
           Go to Posts
         </CounterButton>
+        <CounterButton
+          type="button"
+          onClick={() => navigate('/users')}
+          style={{ marginLeft: '10px' }}
+        >
+          Go to Users
+        </CounterButton>
       </SectionContainer>
 
       <SectionContainer>
