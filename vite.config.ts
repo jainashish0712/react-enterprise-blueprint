@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
-    babel({ presets: [reactCompilerPreset()] })
+    react() as any,
+    babel({ presets: [reactCompilerPreset()] }) as any
   ],
   resolve: {
     dedupe: ['react', 'react-dom']
@@ -14,12 +14,25 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
-          'mui-vendor': ['@mui/x-data-grid']
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router-dom/')) {
+              return 'react-vendor';
+            }
+            if (id.includes('/@reduxjs/toolkit/') || id.includes('/react-redux/')) {
+              return 'redux-vendor';
+            }
+            if (id.includes('/@mui/x-data-grid/')) {
+              return 'mui-vendor';
+            }
+          }
         }
       }
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
   }
 })

@@ -3,31 +3,37 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import PostsPage from './PostsPage';
 import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import { thisIsTheMainStore } from '../store';
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock('react-router-dom', () => {
-  const originalModule = jest.requireActual('react-router-dom');
+vi.mock('react-router-dom', async () => {
+  const originalModule = await vi.importActual<any>('react-router-dom');
   return {
     ...originalModule,
     useNavigate: () => mockNavigate,
   };
 });
 
-jest.mock('../services/apiService', () => ({
-  useGetThePostsDummyResQuery: jest.fn(() => ({
-    data: {
-      posts: [
-        { id: 1, title: 'DataGrid Post 1', body: 'DataGrid Body 1' }
-      ]
-    },
-    isLoading: false,
-    error: undefined,
-  }))
-}));
+vi.mock('../services/apiService', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    useGetThePostsDummyResQuery: vi.fn(() => ({
+      data: {
+        posts: [
+          { id: 1, title: 'DataGrid Post 1', body: 'DataGrid Body 1' }
+        ]
+      },
+      isLoading: false,
+      error: undefined,
+    }))
+  };
+});
 
 // Mock MUI DataGrid to avoid ResizeObserver / JSDOM complexities
-jest.mock('@mui/x-data-grid', () => ({
+vi.mock('@mui/x-data-grid', () => ({
   DataGrid: ({ rows }: any) => (
     <div data-testid="mock-data-grid">
       {rows.map((row: any) => (
@@ -44,9 +50,11 @@ describe('PostsPage Component', () => {
 
   it('renders posts correctly', () => {
     render(
-      <MemoryRouter>
-        <PostsPage />
-      </MemoryRouter>
+      <Provider store={thisIsTheMainStore}>
+        <MemoryRouter>
+          <PostsPage />
+        </MemoryRouter>
+      </Provider>
     );
 
     expect(screen.getByText('Back to Home')).toBeInTheDocument();
@@ -56,9 +64,11 @@ describe('PostsPage Component', () => {
 
   it('handles back navigation', () => {
     render(
-      <MemoryRouter>
-        <PostsPage />
-      </MemoryRouter>
+      <Provider store={thisIsTheMainStore}>
+        <MemoryRouter>
+          <PostsPage />
+        </MemoryRouter>
+      </Provider>
     );
 
     const backButton = screen.getByText('Back to Home');

@@ -9,11 +9,13 @@ import {
 describe('counter reducer', () => {
   const initialState: CounterState = {
     thisIsTheCounterValue: 2,
+    hasVisitedPostsPage: false,
   };
 
   it('should handle initial state', () => {
     expect(thisWillBeUsedInstoreForCounter(undefined, { type: 'unknown' })).toEqual({
       thisIsTheCounterValue: 2,
+      hasVisitedPostsPage: false,
     });
   });
 

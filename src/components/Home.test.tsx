@@ -1,30 +1,46 @@
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
 import { thisIsTheMainStore } from '../store';
+import { setVisitedPostsPage } from '../features/counter/counterSlice';
 import '@testing-library/jest-dom';
 
 // Mock the RTK query hook
-jest.mock('../services/apiService', () => {
-  const originalModule = jest.requireActual('../services/apiService');
+vi.mock('../services/apiService', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../services/apiService')>();
+  const mockQueryState = vi.fn(() => ({
+    data: {
+      posts: [
+        { id: 1, title: 'Test Post 1', body: 'Body 1', userId: 1, tags: [], reactions: { likes: 0, dislikes: 0 } },
+        { id: 2, title: 'Test Post 2', body: 'Body 2', userId: 1, tags: [], reactions: { likes: 0, dislikes: 0 } },
+        { id: 3, title: 'Test Post 3', body: 'Body 3', userId: 1, tags: [], reactions: { likes: 0, dislikes: 0 } },
+      ]
+    },
+    isLoading: false,
+  }));
+
   return {
-    ...originalModule,
-    useGetThePostsDummyResQuery: jest.fn(() => ({
-      data: {
-        posts: [
-          { id: 1, title: 'Test Post 1', body: 'Body 1', userId: 1, tags: [], reactions: { likes: 0, dislikes: 0 } },
-          { id: 2, title: 'Test Post 2', body: 'Body 2', userId: 1, tags: [], reactions: { likes: 0, dislikes: 0 } },
-          { id: 3, title: 'Test Post 3', body: 'Body 3', userId: 1, tags: [], reactions: { likes: 0, dislikes: 0 } },
-        ]
+    ...actual,
+    useGetThePostsDummyResQuery: mockQueryState,
+    thisIsThePostsApi: {
+      ...actual.thisIsThePostsApi,
+      endpoints: {
+        ...actual.thisIsThePostsApi.endpoints,
+        getThePostsDummyRes: {
+          ...actual.thisIsThePostsApi.endpoints.getThePostsDummyRes,
+          useQueryState: mockQueryState,
+        }
       },
-      isLoading: false,
-    })),
+      usePrefetch: vi.fn(() => vi.fn()),
+    }
   };
 });
 
 describe('Home Component', () => {
   it('renders correctly and displays initial count', () => {
+    thisIsTheMainStore.dispatch(setVisitedPostsPage());
     render(
       <Provider store={thisIsTheMainStore}>
         <MemoryRouter>
@@ -45,6 +61,7 @@ describe('Home Component', () => {
   });
 
   it('handles increment and decrement actions', () => {
+    thisIsTheMainStore.dispatch(setVisitedPostsPage());
     render(
       <Provider store={thisIsTheMainStore}>
         <MemoryRouter>
