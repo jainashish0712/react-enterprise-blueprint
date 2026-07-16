@@ -7,7 +7,7 @@
   DataGrid's built-in pagination API (paginationMode="server"). This drastically reduces the network payload and
   DOM nodes, improving Time to Interactive (TTI).
 
-  2. Data Prefetching on Hover
+  <!-- 2. Data Prefetching on Hover
   You can eliminate loading screens entirely for users navigating between pages.
 
   • Addition: Use RTK Query's usePrefetch hook. When a user hovers their mouse over the "Go to Posts" button in
@@ -19,7 +19,7 @@
 
   • Addition: Configure build.rollupOptions.output.manualChunks in vite.config.ts to split vendor libraries into
   separate chunks (e.g., one chunk for React/Redux, one for MUI). This allows browsers to cache the core framework
-  code independently from heavy UI libraries, speeding up subsequent page loads.
+  code independently from heavy UI libraries, speeding up subsequent page loads. -->
 
   4. Implement a Service Worker (PWA)
   Your app relies entirely on network requests to load basic assets.
@@ -29,13 +29,13 @@
 
   ### Medium Priority (Runtime & Assets)
 
-  5. Memoized Redux Selectors (createSelector)
+  <!-- 5. Memoized Redux Selectors (createSelector)
   While your current counter state is simple, as the app grows, you will likely need to filter or sort data in the
   Redux store.
 
   • Addition: Establish a pattern of using createSelector (reselect, built into RTK). This memoizes derived state,
   meaning React components will only re-render if the underlying data actually changes, avoiding expensive
-  recalculations.
+  recalculations. -->
 
   6. Bundle Size Visualizer Plugin
   It's easy to accidentally import a massive library that ruins performance.
@@ -60,11 +60,11 @@
   to an analytics endpoint (like Google Analytics, Vercel, or a custom backend) to track if your performance
   optimizations are actually working in the wild.
 
-  9. Debounce/Throttle Hooks for UI Interactions
+  <!-- 9. Debounce/Throttle Hooks for UI Interactions
   If you ever add search filters to your DataGrid or rapid-fire actions to the counter, it can cause UI freezing.
 
   • Addition: Introduce a useDebounce custom hook. If a user is typing a search query to filter posts, this
-  ensures you don't fire an API request or re-render the heavy DataGrid on every single keystroke.
+  ensures you don't fire an API request or re-render the heavy DataGrid on every single keystroke. -->
 
   10. Font Preloading and Display Swapping
   If you plan to use custom web fonts (like Google Fonts) later in the project, they can block the render tree and

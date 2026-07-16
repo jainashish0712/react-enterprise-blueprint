@@ -6,6 +6,36 @@ import { useDebounce } from "../hooks/useDebounce";
 import { useAppDispatch } from "../store";
 import { setVisitedPostsPage } from "../features/counter/counterSlice";
 import { useEffect } from "react";
+import { styled } from '@mui/material/styles';
+import { CounterButton } from './Home';
+
+const PageContainer = styled('div')({
+  padding: '20px',
+  textAlign: 'center'
+});
+
+const SearchContainer = styled('div')({
+  marginBottom: '20px'
+});
+
+const SearchInput = styled('input')({
+  padding: '10px',
+  width: '300px',
+  borderRadius: '5px',
+  border: '1px solid #ccc'
+});
+
+const SearchHelper = styled('p')({
+  fontSize: '0.8rem',
+  color: '#666',
+  marginTop: '5px'
+});
+
+const DataGridContainer = styled('div')({
+  height: 600,
+  width: '100%',
+  marginTop: '20px'
+});
 
 export default function PostsPage() {
   const {
@@ -40,24 +70,22 @@ export default function PostsPage() {
   }, [theseAreThePosts, debouncedSearchTerm]);
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <button
-        className="counter"
+    <PageContainer>
+      <CounterButton
         onClick={() => navigate("/")}
         style={{ marginBottom: "20px" }}>
         Back to Home
-      </button>
+      </CounterButton>
 
-      <div style={{ marginBottom: "20px" }}>
-        <input
+      <SearchContainer>
+        <SearchInput
           type="text"
           placeholder="Search posts..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ padding: "10px", width: "300px", borderRadius: "5px", border: "1px solid #ccc" }}
         />
-        <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>Debounced search active</p>
-      </div>
+        <SearchHelper>Debounced search active</SearchHelper>
+      </SearchContainer>
 
       {isLoading && <p>Loading posts...</p>}
       {error && (
@@ -66,7 +94,7 @@ export default function PostsPage() {
           issues)
         </p>
       )}
-      <div style={{ height: 600, width: "100%", marginTop: "20px" }}>
+      <DataGridContainer>
         <DataGrid
           columns={[
             { field: "id", headerName: "ID", width: 70 },
@@ -75,7 +103,7 @@ export default function PostsPage() {
           ]}
           rows={filteredRows}
         />
-      </div>
-    </div>
+      </DataGridContainer>
+    </PageContainer>
   );
 }
