@@ -1,6 +1,11 @@
+import { useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { useGetThePostsDummyResQuery, type Post } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
+import { useDebounce } from "../hooks/useDebounce";
+import { useDispatch } from "react-redux";
+import { setVisitedPostsPage } from "../features/counter/counterSlice";
+import { useEffect } from "react";
 
 export default function PostsPage() {
   const {
@@ -10,8 +15,29 @@ export default function PostsPage() {
   } = useGetThePostsDummyResQuery();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  console.log("13", theseAreThePosts, typeof theseAreThePosts);
+  useEffect(() => {
+    dispatch(setVisitedPostsPage());
+  }, [dispatch]);
+
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  const filteredRows = useMemo(() => {
+    if (!theseAreThePosts?.posts) return [];
+
+    return theseAreThePosts.posts
+      .filter((post) =>
+        post.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        post.body.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      )
+      .map((post: Post, i: number) => ({
+        ...post,
+        id: post.id ?? i,
+      }));
+  }, [theseAreThePosts, debouncedSearchTerm]);
 
   return (
     <div style={{ padding: "20px", textAlign: "center" }}>
@@ -21,6 +47,18 @@ export default function PostsPage() {
         style={{ marginBottom: "20px" }}>
         Back to Home
       </button>
+
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          type="text"
+          placeholder="Search posts..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ padding: "10px", width: "300px", borderRadius: "5px", border: "1px solid #ccc" }}
+        />
+        <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>Debounced search active</p>
+      </div>
+
       {isLoading && <p>Loading posts...</p>}
       {error && (
         <p>
@@ -28,21 +66,14 @@ export default function PostsPage() {
           issues)
         </p>
       )}
-      <div style={{ height: 200, width: "100%", marginTop: "20px" }}>
+      <div style={{ height: 600, width: "100%", marginTop: "20px" }}>
         <DataGrid
           columns={[
             { field: "id", headerName: "ID", width: 70 },
             { field: "title", headerName: "Title", width: 300 },
             { field: "body", headerName: "Body", width: 500 },
           ]}
-          rows={
-            theseAreThePosts?.posts
-              ? theseAreThePosts.posts.map((post: Post, i: number) => ({
-                  id: post.id ?? i,
-                  ...post,
-                }))
-              : []
-          }
+          rows={filteredRows}
         />
       </div>
     </div>

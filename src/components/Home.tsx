@@ -3,17 +3,15 @@ import reactLogo from '../assets/react.svg'
 import viteLogo from '../assets/vite.svg'
 import heroImg from '../assets/hero.png'
 import '../App.css'
-import { decrementTheCounter, incrementTheCounter } from '../features/counter/counterSlice';
+import { decrementTheCounter, incrementTheCounter, selectCounterValue, selectHasVisitedPostsPage } from '../features/counter/counterSlice';
 import { useGetThePostsDummyResQuery, thisIsThePostsApi, type Post } from '../services/apiService';
 import type { RootState } from '../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-  const {
-    data: theseAreThePosts,
-    isLoading,
-  } = useGetThePostsDummyResQuery()
-  const thisIsTheCurrentCount = useSelector((state: RootState) => state.thisIsCounterState.thisIsTheCounterValue)
+  const { data: theseAreThePosts, isLoading } = thisIsThePostsApi.endpoints.getThePostsDummyRes.useQueryState();
+  const thisIsTheCurrentCount = useSelector(selectCounterValue)
+  const hasVisited = useSelector(selectHasVisitedPostsPage)
   const thisIsTheDispatchFunction = useDispatch()
   const navigate = useNavigate()
   const prefetchPosts = thisIsThePostsApi.usePrefetch('getThePostsDummyRes')
@@ -61,7 +59,7 @@ export default function Home() {
         <button
           type="button"
           className="counter"
-          onMouseEnter={() => prefetchPosts}
+          onMouseEnter={() => prefetchPosts()}
           onClick={() => navigate('/posts')}
         >
           Go to Posts
@@ -70,12 +68,26 @@ export default function Home() {
 
       <div style={{ padding: '20px', textAlign: 'center' }}>
         <h3>Preview of fetched posts from Cache:</h3>
-        {isLoading && <p>Loading...</p>}
-        {theseAreThePosts?.posts?.slice(0, thisIsTheCurrentCount).map((post: Post) => (
-          <div key={post.id} style={{ margin: '5px auto', padding: '10px', border: '1px solid #ccc', maxWidth: '600px', textAlign: 'left' }}>
-            <strong>{post.title}</strong>
-          </div>
-        ))}
+        {hasVisited && (
+          <>
+            {isLoading && <p>Loading...</p>}
+
+            {theseAreThePosts?.posts?.slice(0, thisIsTheCurrentCount).map((post: Post) => (
+              <div
+                key={post.id}
+                style={{
+                  margin: '5px auto',
+                  padding: '10px',
+                  border: '1px solid #ccc',
+                  maxWidth: '600px',
+                  textAlign: 'left',
+                }}
+              >
+                <strong>{post.title}</strong>
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </>
   )
