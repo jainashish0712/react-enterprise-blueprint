@@ -1,36 +1,37 @@
+import { describe, it, expect } from 'vitest';
 import {
-  thisWillBeUsedInstoreForCounter,
-  incrementTheCounter,
-  decrementTheCounter,
-  incrementTheCounterByAmount,
+  counterReducer,
+  increment,
+  decrement,
+  incrementByAmount,
   type CounterState
 } from './counterSlice';
 
 describe('counter reducer', () => {
   const initialState: CounterState = {
-    thisIsTheCounterValue: 2,
-    hasVisitedPostsPage: false,
+    value: 2,
+    hasVisitedPosts: false,
   };
 
   it('should handle initial state', () => {
-    expect(thisWillBeUsedInstoreForCounter(undefined, { type: 'unknown' })).toEqual({
-      thisIsTheCounterValue: 2,
-      hasVisitedPostsPage: false,
+    expect(counterReducer(undefined, { type: 'unknown' })).toEqual({
+      value: 2,
+      hasVisitedPosts: false,
     });
   });
 
-  it('should handle incrementTheCounter', () => {
-    const actual = thisWillBeUsedInstoreForCounter(initialState, incrementTheCounter());
-    expect(actual.thisIsTheCounterValue).toEqual(3);
+  it('should handle increment', () => {
+    const actual = counterReducer(initialState, increment());
+    expect(actual.value).toEqual(3);
   });
 
-  it('should handle decrementTheCounter', () => {
-    const actual = thisWillBeUsedInstoreForCounter(initialState, decrementTheCounter());
-    expect(actual.thisIsTheCounterValue).toEqual(1);
+  it('should handle decrement', () => {
+    const actual = counterReducer(initialState, decrement());
+    expect(actual.value).toEqual(1);
   });
 
-  it('should handle incrementTheCounterByAmount', () => {
-    const actual = thisWillBeUsedInstoreForCounter(initialState, incrementTheCounterByAmount(5));
-    expect(actual.thisIsTheCounterValue).toEqual(7);
+  it('should handle incrementByAmount', () => {
+    const actual = counterReducer(initialState, incrementByAmount(5));
+    expect(actual.value).toEqual(7);
   });
 });

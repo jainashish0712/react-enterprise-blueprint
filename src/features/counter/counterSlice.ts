@@ -2,48 +2,46 @@ import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolki
 import type { RootState } from '../../store';
 
 export interface CounterState {
-  thisIsTheCounterValue: number;
-  hasVisitedPostsPage: boolean;
+  value: number;
+  hasVisitedPosts: boolean;
 }
 
 const initialState: CounterState = {
-  thisIsTheCounterValue: 2,
-  hasVisitedPostsPage: false,
+  value: 2,
+  hasVisitedPosts: false,
 };
 
-export const thisIsCounterSlice = createSlice({
-  name: 'counterSliceName',
+export const counterSlice = createSlice({
+  name: 'counter',
   initialState,
   reducers: {
-    incrementTheCounter: (state) => {
-      state.thisIsTheCounterValue += 1;
+    increment: (state) => {
+      state.value += 1;
     },
-    decrementTheCounter: (state) => {
-      state.thisIsTheCounterValue -= 1;
+    decrement: (state) => {
+      state.value -= 1;
     },
-    incrementTheCounterByAmount: (state, action: PayloadAction<number>) => {
-      state.thisIsTheCounterValue += action.payload;
+    incrementByAmount: (state, action: PayloadAction<number>) => {
+      state.value += action.payload;
     },
-    setVisitedPostsPage: (state) => {
-      state.hasVisitedPostsPage = true;
+    setVisitedPosts: (state) => {
+      state.hasVisitedPosts = true;
     },
   },
 });
 
-export const { incrementTheCounter, decrementTheCounter, incrementTheCounterByAmount, setVisitedPostsPage } = thisIsCounterSlice.actions;
+export const { increment, decrement, incrementByAmount, setVisitedPosts } = counterSlice.actions;
 
-export const thisWillBeUsedInstoreForCounter = thisIsCounterSlice.reducer;
+export const counterReducer = counterSlice.reducer;
 
-export const selectCounterState = (state: RootState) => state.thisIsCounterState;
+export const selectCounterState = (state: RootState) => state.counter;
 
-// export const selectCounterState = (state: RootState) => state.thisIsCounterState;
-
-export const selectCounterValue = createSelector(
+export const selectCount = createSelector(
   [selectCounterState],
-  (counterState) => counterState.thisIsTheCounterValue
+  (counterState) => counterState.value
 );
 
-export const selectHasVisitedPostsPage = createSelector(
+export const selectHasVisitedPosts = createSelector(
   [selectCounterState],
-  (counterState) => counterState.hasVisitedPostsPage
+  (counterState) => counterState.hasVisitedPosts
 );

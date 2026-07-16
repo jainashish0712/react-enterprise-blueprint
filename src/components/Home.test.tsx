@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import Home from './Home';
-import { thisIsTheMainStore } from '../store';
-import { setVisitedPostsPage } from '../features/counter/counterSlice';
+import { store } from '../store';
+import { setVisitedPosts } from '../features/counter/counterSlice';
 import '@testing-library/jest-dom';
 
 // Mock the RTK query hook
@@ -23,13 +23,13 @@ vi.mock('../services/apiService', async (importOriginal) => {
 
   return {
     ...actual,
-    useGetThePostsDummyResQuery: mockQueryState,
-    thisIsThePostsApi: {
-      ...actual.thisIsThePostsApi,
+    useGetPostsQuery: mockQueryState,
+    apiService: {
+      ...actual.apiService,
       endpoints: {
-        ...actual.thisIsThePostsApi.endpoints,
-        getThePostsDummyRes: {
-          ...actual.thisIsThePostsApi.endpoints.getThePostsDummyRes,
+        ...actual.apiService?.endpoints,
+        getPosts: {
+          ...actual.apiService?.endpoints?.getPosts,
           useQueryState: mockQueryState,
         }
       },
@@ -40,9 +40,9 @@ vi.mock('../services/apiService', async (importOriginal) => {
 
 describe('Home Component', () => {
   it('renders correctly and displays initial count', () => {
-    thisIsTheMainStore.dispatch(setVisitedPostsPage());
+    store.dispatch(setVisitedPosts());
     render(
-      <Provider store={thisIsTheMainStore}>
+      <Provider store={store}>
         <MemoryRouter>
           <Home />
         </MemoryRouter>
@@ -61,9 +61,9 @@ describe('Home Component', () => {
   });
 
   it('handles increment and decrement actions', () => {
-    thisIsTheMainStore.dispatch(setVisitedPostsPage());
+    store.dispatch(setVisitedPosts());
     render(
-      <Provider store={thisIsTheMainStore}>
+      <Provider store={store}>
         <MemoryRouter>
           <Home />
         </MemoryRouter>

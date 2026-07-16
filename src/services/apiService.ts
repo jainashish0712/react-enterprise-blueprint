@@ -33,11 +33,11 @@ export interface UsersResponse {
   limit: number;
 }
 
-export const thisIsThePostsApi = createApi({
-  reducerPath: 'postsApiReducerPath',
+export const apiService = createApi({
+  reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://dummyjson.com/' }),
   endpoints: (builder) => ({
-    getThePostsDummyRes: builder.query<PostsResponse, void>({
+    getPosts: builder.query<PostsResponse, void>({
       query: () => 'posts',
     }),
     getUsers: builder.query<UsersResponse, void>({
@@ -46,6 +46,6 @@ export const thisIsThePostsApi = createApi({
   }),
 });
 
-export const { useGetThePostsDummyResQuery, useGetUsersQuery } = thisIsThePostsApi;
+export const { useGetPostsQuery, useGetUsersQuery } = apiService;
 
-export const thisWillBeUsedInstoreForApi = thisIsThePostsApi.reducer;
+export const apiReducer = apiService.reducer;

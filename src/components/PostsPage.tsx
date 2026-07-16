@@ -1,15 +1,16 @@
 import { useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { useGetThePostsDummyResQuery, type Post } from "../services/apiService";
+import { useGetPostsQuery, type Post } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../hooks/useDebounce";
 import { useAppDispatch } from "../store";
-import { setVisitedPostsPage } from "../features/counter/counterSlice";
+import { setVisitedPosts } from "../features/counter/counterSlice";
 import { useEffect } from "react";
 import { styled } from '@mui/material/styles';
+import { motion } from 'framer-motion';
 import { CounterButton } from './Home';
 
-const PageContainer = styled('div')({
+const PageContainer = styled(motion.div)({
   padding: '20px',
   textAlign: 'center'
 });
@@ -39,16 +40,16 @@ const DataGridContainer = styled('div')({
 
 export default function PostsPage() {
   const {
-    data: theseAreThePosts,
+    data: postsData,
     error,
     isLoading,
-  } = useGetThePostsDummyResQuery();
+  } = useGetPostsQuery();
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setVisitedPostsPage());
+    dispatch(setVisitedPosts());
   }, [dispatch]);
 
 
@@ -56,9 +57,9 @@ export default function PostsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const filteredRows = useMemo(() => {
-    if (!theseAreThePosts?.posts) return [];
+    if (!postsData?.posts) return [];
 
-    return theseAreThePosts.posts
+    return postsData.posts
       .filter((post) =>
         post.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         post.body.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -67,11 +68,17 @@ export default function PostsPage() {
         ...post,
         id: post.id ?? i,
       }));
-  }, [theseAreThePosts, debouncedSearchTerm]);
+  }, [postsData, debouncedSearchTerm]);
 
   return (
-    <PageContainer>
+    <PageContainer
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <CounterButton
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => navigate("/")}
         style={{ marginBottom: "20px" }}>
         Back to Home
@@ -90,7 +97,7 @@ export default function PostsPage() {
       {isLoading && <p>Loading posts...</p>}
       {error && (
         <p>
-          Error loading posts (dummyres.com might not be available or CORS
+          Error loading posts (dummyjson.com might not be available or CORS
           issues)
         </p>
       )}

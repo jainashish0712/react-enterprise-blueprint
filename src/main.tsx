@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import GlobalStyles from './styles/GlobalStyles'
 import App from './App.tsx'
-import { thisIsTheMainStore } from './store.ts'
+import { store } from './store.ts'
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary'
 
 const Fallback = ({ error }: FallbackProps) => (
@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary FallbackComponent={Fallback}>
       <GlobalStyles />
-      <Provider store={thisIsTheMainStore}>
+      <Provider store={store}>
         <BrowserRouter>
           <App />
         </BrowserRouter>

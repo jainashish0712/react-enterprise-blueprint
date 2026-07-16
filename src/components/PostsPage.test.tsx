@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import PostsPage from './PostsPage';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import { thisIsTheMainStore } from '../store';
+import { store } from '../store';
 
 const mockNavigate = vi.fn();
 
@@ -20,7 +20,7 @@ vi.mock('../services/apiService', async (importOriginal) => {
   const actual = await importOriginal<any>();
   return {
     ...actual,
-    useGetThePostsDummyResQuery: vi.fn(() => ({
+    useGetPostsQuery: vi.fn(() => ({
       data: {
         posts: [
           { id: 1, title: 'DataGrid Post 1', body: 'DataGrid Body 1' }
@@ -50,7 +50,7 @@ describe('PostsPage Component', () => {
 
   it('renders posts correctly', () => {
     render(
-      <Provider store={thisIsTheMainStore}>
+      <Provider store={store}>
         <MemoryRouter>
           <PostsPage />
         </MemoryRouter>
@@ -64,7 +64,7 @@ describe('PostsPage Component', () => {
 
   it('handles back navigation', () => {
     render(
-      <Provider store={thisIsTheMainStore}>
+      <Provider store={store}>
         <MemoryRouter>
           <PostsPage />
         </MemoryRouter>

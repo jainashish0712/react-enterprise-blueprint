@@ -2,12 +2,13 @@ import { useAppSelector, useAppDispatch } from '../store'
 import reactLogo from '../assets/react.svg'
 import viteLogo from '../assets/vite.svg'
 import heroImg from '../assets/hero.png'
-import { decrementTheCounter, incrementTheCounter, selectCounterValue, selectHasVisitedPostsPage } from '../features/counter/counterSlice';
-import { useGetThePostsDummyResQuery, thisIsThePostsApi, type Post } from '../services/apiService';
+import { decrement, increment, selectCount, selectHasVisitedPosts } from '../features/counter/counterSlice';
+import { useGetPostsQuery, apiService, type Post } from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import { motion } from 'framer-motion';
 
-const Hero = styled('div')({
+const Hero = styled(motion.div)({
   position: 'relative',
   '& .base, & .framework, & .vite': {
     insetInline: 0,
@@ -36,7 +37,7 @@ const Hero = styled('div')({
   }
 });
 
-const CenterSection = styled('section')({
+const CenterSection = styled(motion.section)({
   display: 'flex',
   flexDirection: 'column',
   gap: '25px',
@@ -49,7 +50,7 @@ const CenterSection = styled('section')({
   }
 });
 
-export const CounterButton = styled('button')({
+export const CounterButton = styled(motion.button)({
   fontFamily: 'var(--mono)',
   display: 'inline-flex',
   fontSize: '16px',
@@ -100,7 +101,7 @@ const SectionContainer = styled('section')({
   textAlign: 'center'
 });
 
-const PostCard = styled('div')({
+const PostCard = styled(motion.div)({
   margin: '5px auto',
   padding: '10px',
   border: '1px solid #ccc',
@@ -109,17 +110,25 @@ const PostCard = styled('div')({
 });
 
 export default function Home() {
-  const { data: theseAreThePosts, isLoading } = thisIsThePostsApi.endpoints.getThePostsDummyRes.useQueryState();
-  const thisIsTheCurrentCount = useAppSelector(selectCounterValue)
-  const hasVisited = useAppSelector(selectHasVisitedPostsPage)
-  const thisIsTheDispatchFunction = useAppDispatch()
+  const { data: postsData, isLoading } = apiService.endpoints.getPosts.useQueryState();
+  const currentCount = useAppSelector(selectCount)
+  const hasVisited = useAppSelector(selectHasVisitedPosts)
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const prefetchPosts = thisIsThePostsApi.usePrefetch('getThePostsDummyRes')
+  const prefetchPosts = apiService.usePrefetch('getPosts')
 
   return (
     <>
-      <CenterSection>
-        <Hero>
+      <CenterSection
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Hero
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <img src={heroImg} className="base" width="170" height="179" alt="" />
           <img src={reactLogo} className="framework" alt="React logo" />
           <img src={viteLogo} className="vite" alt="Vite logo" />
@@ -131,7 +140,9 @@ export default function Home() {
         <FlexContainer>
           <CounterButton
             type="button"
-            onClick={() => thisIsTheDispatchFunction(decrementTheCounter())}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => dispatch(decrement())}
           >
             -
           </CounterButton>
@@ -139,11 +150,13 @@ export default function Home() {
             type="button"
             style={{ pointerEvents: 'none' }}
           >
-            Count is {thisIsTheCurrentCount}
+            Count is {currentCount}
           </CounterButton>
           <CounterButton
             type="button"
-            onClick={() => thisIsTheDispatchFunction(incrementTheCounter())}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => dispatch(increment())}
           >
             +
           </CounterButton>
@@ -155,6 +168,8 @@ export default function Home() {
       <SectionContainer>
         <CounterButton
           type="button"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onMouseEnter={() => prefetchPosts()}
           onClick={() => navigate('/posts')}
         >
@@ -162,6 +177,8 @@ export default function Home() {
         </CounterButton>
         <CounterButton
           type="button"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/users')}
           style={{ marginLeft: '10px' }}
         >
@@ -175,8 +192,13 @@ export default function Home() {
           <>
             {isLoading && <p>Loading...</p>}
 
-            {theseAreThePosts?.posts?.slice(0, thisIsTheCurrentCount).map((post: Post) => (
-              <PostCard key={post.id}>
+            {postsData?.posts?.slice(0, currentCount).map((post: Post, index: number) => (
+              <PostCard 
+                key={post.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
                 <strong>{post.title}</strong>
               </PostCard>
             ))}
