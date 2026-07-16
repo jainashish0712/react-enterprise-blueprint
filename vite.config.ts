@@ -10,5 +10,16 @@ export default defineConfig({
   ],
   resolve: {
     dedupe: ['react', 'react-dom']
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
+          'mui-vendor': ['@mui/x-data-grid']
+        }
+      }
+    }
   }
 })

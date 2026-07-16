@@ -4,7 +4,7 @@ import viteLogo from '../assets/vite.svg'
 import heroImg from '../assets/hero.png'
 import '../App.css'
 import { decrementTheCounter, incrementTheCounter } from '../features/counter/counterSlice';
-import { useGetThePostsDummyResQuery, type Post } from '../services/apiService';
+import { useGetThePostsDummyResQuery, thisIsThePostsApi, type Post } from '../services/apiService';
 import type { RootState } from '../store';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,6 +16,7 @@ export default function Home() {
   const thisIsTheCurrentCount = useSelector((state: RootState) => state.thisIsCounterState.thisIsTheCounterValue)
   const thisIsTheDispatchFunction = useDispatch()
   const navigate = useNavigate()
+  const prefetchPosts = thisIsThePostsApi.usePrefetch('getThePostsDummyRes')
 
   return (
     <>
@@ -60,6 +61,7 @@ export default function Home() {
         <button
           type="button"
           className="counter"
+          onMouseEnter={() => prefetchPosts}
           onClick={() => navigate('/posts')}
         >
           Go to Posts
