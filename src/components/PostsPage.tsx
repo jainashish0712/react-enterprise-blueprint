@@ -7,9 +7,10 @@ import { useAppDispatch } from "../store";
 import { setVisitedPostsPage } from "../features/counter/counterSlice";
 import { useEffect } from "react";
 import { styled } from '@mui/material/styles';
+import { motion } from 'framer-motion';
 import { CounterButton } from './Home';
 
-const PageContainer = styled('div')({
+const PageContainer = styled(motion.div)({
   padding: '20px',
   textAlign: 'center'
 });
@@ -70,8 +71,14 @@ export default function PostsPage() {
   }, [theseAreThePosts, debouncedSearchTerm]);
 
   return (
-    <PageContainer>
+    <PageContainer
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <CounterButton
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => navigate("/")}
         style={{ marginBottom: "20px" }}>
         Back to Home

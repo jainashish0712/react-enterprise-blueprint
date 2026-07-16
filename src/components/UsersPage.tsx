@@ -3,10 +3,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useGetUsersQuery, type User } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
+import { motion } from 'framer-motion';
 import { CounterButton } from './Home';
 import { useDebounce } from "../hooks/useDebounce";
 
-const PageContainer = styled('div')({
+const PageContainer = styled(motion.div)({
   padding: '20px',
   textAlign: 'center'
 });
@@ -85,8 +86,17 @@ export default function UsersPage() {
   }, [data, debouncedSearchTerm, searchField]);
 
   return (
-    <PageContainer>
-      <CounterButton onClick={() => navigate("/")} style={{ marginBottom: "20px" }}>
+    <PageContainer
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <CounterButton 
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate("/")} 
+        style={{ marginBottom: "20px" }}
+      >
         Back to Home
       </CounterButton>
 
