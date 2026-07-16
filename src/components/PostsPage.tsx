@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useGetThePostsDummyResQuery, type Post } from "../services/apiService";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../hooks/useDebounce";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../store";
 import { setVisitedPostsPage } from "../features/counter/counterSlice";
 import { useEffect } from "react";
 
@@ -15,7 +15,7 @@ export default function PostsPage() {
   } = useGetThePostsDummyResQuery();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(setVisitedPostsPage());

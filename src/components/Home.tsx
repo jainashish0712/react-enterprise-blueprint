@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux'
+import { useAppSelector, useAppDispatch } from '../store'
 import reactLogo from '../assets/react.svg'
 import viteLogo from '../assets/vite.svg'
 import heroImg from '../assets/hero.png'
@@ -10,9 +10,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const { data: theseAreThePosts, isLoading } = thisIsThePostsApi.endpoints.getThePostsDummyRes.useQueryState();
-  const thisIsTheCurrentCount = useSelector(selectCounterValue)
-  const hasVisited = useSelector(selectHasVisitedPostsPage)
-  const thisIsTheDispatchFunction = useDispatch()
+  const thisIsTheCurrentCount = useAppSelector(selectCounterValue)
+  const hasVisited = useAppSelector(selectHasVisitedPostsPage)
+  const thisIsTheDispatchFunction = useAppDispatch()
   const navigate = useNavigate()
   const prefetchPosts = thisIsThePostsApi.usePrefetch('getThePostsDummyRes')
 
